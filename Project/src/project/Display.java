@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-public class Display extends JFrame implements ActionListener {
+public class Display extends JFrame {
 	/**
 	 * 
 	 */
@@ -21,30 +21,31 @@ public class Display extends JFrame implements ActionListener {
 	private static final int DEMO_APP_WIDTH = 700;
 	private static final int DEMO_APP_HEIGHT = 500;
 	private static final String DEMO_APP_TITLE = "DEMO";
-	JButton viewButton;
-	JButton resetButton;
-	JButton exitButton;
-	JTextField input;
-	JTextField viewResultOfBubbleSort;
-	JTextField viewResultOfSelectionSort;
-	JTextField viewResultOfQuickSort;
-	JTextField viewResultOfMergeSort;
-	JComboBox<String> browseBox;
-	JComboBox<String> orderBox;
-	JTextField viewTimeOfBubbleSort;
-	JTextField viewTimeOfSelectionSort;
-	JTextField viewTimeOfQuickSort;
-	JTextField viewTimeOfMergeSort;
-	Input data = new Input();
+	private static final String DEMO_APP_PATH_IMAGE_ICON = "E:\\workspace\\sorting-algorithms.png";
+	private JButton btRun;
+	private JButton btReset;
+	private JButton btExit;
+	private JTextField input;
+	private JTextField viewResultOfBubbleSort;
+	private JTextField viewResultOfSelectionSort;
+	private JTextField viewResultOfQuickSort;
+	private JTextField viewResultOfMergeSort;
+	private JComboBox<String> browseBox;
+	private JComboBox<String> orderBox;
+	private JTextField viewTimeOfBubbleSort;
+	private JTextField viewTimeOfSelectionSort;
+	private JTextField viewTimeOfQuickSort;
+	private JTextField viewTimeOfMergeSort;
+	private Input data = new Input();
 
 	public Display() {
 		GUI();
+		controlEvents();
 	}
 
 	public static void main(String[] args) {
 		Display display = new Display();
 		display.setVisible(true);
-
 	}
 
 	private void GUI() {
@@ -52,12 +53,13 @@ public class Display extends JFrame implements ActionListener {
 		setTitle(DEMO_APP_TITLE);
 		setSize(DEMO_APP_WIDTH, DEMO_APP_HEIGHT);
 		setLocationRelativeTo(null);
+		setResizable(false);
 
 		JPanel jpanel = new JPanel();
 		add(jpanel);
 		initComponents(jpanel);
 
-		ImageIcon imageIcon = new ImageIcon("E:\\workspace\\sorting-algorithms.png");
+		ImageIcon imageIcon = new ImageIcon(DEMO_APP_PATH_IMAGE_ICON);
 		setIconImage(imageIcon.getImage());
 	}
 
@@ -82,8 +84,6 @@ public class Display extends JFrame implements ActionListener {
 		browseBox.addItem("10 items");
 		browseBox.addItem("100 items");
 		browseBox.addItem("1000 items");
-
-		browseBox.addActionListener(this);
 
 		jpanel.add(browseBox);
 
@@ -162,86 +162,129 @@ public class Display extends JFrame implements ActionListener {
 		viewTimeOfMergeSort.setBounds(580, 320, 90, 30);
 		jpanel.add(viewTimeOfMergeSort);
 
-		viewButton = new JButton();
-		viewButton.setBounds(100, 380, 100, 30);
-		viewButton.setText("Run");
-		viewButton.addActionListener(this);
+		btRun = new JButton("Run");
+		btRun.setBounds(100, 380, 100, 30);
 
-		jpanel.add(viewButton);
+		jpanel.add(btRun);
 
-		resetButton = new JButton();
-		resetButton.setBounds(300, 380, 100, 30);
-		resetButton.setText("Reset");
-		resetButton.addActionListener(this);
+		btReset = new JButton("Reset");
+		btReset.setBounds(300, 380, 100, 30);
 
-		jpanel.add(resetButton);
+		jpanel.add(btReset);
 
-		exitButton = new JButton();
-		exitButton.setBounds(500, 380, 100, 30);
-		exitButton.setText("Exit");
-		exitButton.addActionListener(this);
-		jpanel.add(exitButton);
+		btExit = new JButton("Exit");
+		btExit.setBounds(500, 380, 100, 30);
+
+		jpanel.add(btExit);
+	}
+
+	private void controlEvents() {
+		btRunEvents();
+		btResetEvents();
+		btExitEvents();
+		browseBoxEvents();
+	}
+
+	private void browseBoxEvents() {
+		browseBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (browseBox.getSelectedIndex() == 0) {
+					input.setText("");
+				}
+				if (browseBox.getSelectedIndex() == 1) {
+					input.setText(Input.ArrayToString(data.inputByRandom(10)));
+				}
+				if (browseBox.getSelectedIndex() == 2) {
+					input.setText(Input.ArrayToString(data.inputByRandom(100)));
+				}
+				if (browseBox.getSelectedIndex() == 3) {
+					input.setText(Input.ArrayToString(data.inputByRandom(100)));
+				}
+			}
+		});
 
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == browseBox) {
-			if (browseBox.getSelectedIndex() == 0) {
+	private void btRunEvents() {
+		btRun.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (input.getText().equals("")) {
+					JOptionPane.showMessageDialog(rootPane, "Please input numbers!");
+				} else {
+					int[] numbers = data.StringToArray(input.getText());
+					if (orderBox.getSelectedIndex() == 0) {
+						printResult(numbers, "ASC");
+					} else {
+						printResult(numbers, "DESC");
+					}
+				}
+			}
+		});
+	}
+
+	private void btResetEvents() {
+		btReset.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				input.setText("");
+				viewResultOfBubbleSort.setText("");
+				viewResultOfSelectionSort.setText("");
+				viewResultOfQuickSort.setText("");
+				viewResultOfMergeSort.setText("");
 			}
-			if (browseBox.getSelectedIndex() == 1) {
-				input.setText(Input.ArrayToString(data.inputByRandom(10)));
-			}
-			if (browseBox.getSelectedIndex() == 2) {
-				input.setText(Input.ArrayToString(data.inputByRandom(100)));
-			}
-			if (browseBox.getSelectedIndex() == 3) {
-				input.setText(Input.ArrayToString(data.inputByRandom(100)));
-			}
-		}
-		if (e.getSource() == viewButton) {
-			if (input.getText().equals("")) {
-				JOptionPane.showMessageDialog(this, "Please input numbers!");
-			} else {
-				int[] numbers = data.StringToArray(input.getText());
-				printResult(numbers);
-			}
-		}
-		if (e.getSource() == resetButton) {
-
-			input.setText("");
-			viewResultOfBubbleSort.setText("");
-			viewResultOfSelectionSort.setText("");
-			viewResultOfQuickSort.setText("");
-			viewResultOfMergeSort.setText("");
-
-		}
-		if (e.getSource() == exitButton) {
-			System.exit(0);
-
-		}
+		});
 	}
 
-	private void printResult(int[] numbers) {
+	private void btExitEvents() {
+		btExit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+	}
+
+	private void printResult(int[] numbers, String ad) {
 		Sort sort = new Sort();
 		Result result = new Result();
-		Result bubbleResult = result.TestSortingAlgorithm(sort::bubbleSort, numbers);
+
+		Result bubbleResult = null;
+		Result selectionResult = null;
+		Result quickResult = null;
+		Result mergeResult = null;
+		if (ad.equals("ASC")) {
+			bubbleResult = result.TestSortingAlgorithm(sort::bubbleSort, (a, b) -> a > b, numbers);
+
+			selectionResult = result.TestSortingAlgorithm(sort::selectionSort, (a, b) -> a < b, numbers);
+
+			quickResult = result.TestSortingAlgorithm(sort::quickSortMethod, (a, b) -> a < b, numbers);
+
+			mergeResult = result.TestSortingAlgorithm(sort::mergeSortMethod, (a, b) -> a < b, numbers);
+		}
+		if (ad.equals("DESC")) {
+			bubbleResult = result.TestSortingAlgorithm(sort::bubbleSort, (a, b) -> a < b, numbers);
+
+			selectionResult = result.TestSortingAlgorithm(sort::selectionSort, (a, b) -> a > b, numbers);
+
+			quickResult = result.TestSortingAlgorithm(sort::quickSortMethod, (a, b) -> a > b, numbers);
+
+			mergeResult = result.TestSortingAlgorithm(sort::mergeSortMethod, (a, b) -> a > b, numbers);
+
+		}
 		viewResultOfBubbleSort.setText(Input.ArrayToString(bubbleResult.numbers));
 		viewTimeOfBubbleSort.setText(String.valueOf(bubbleResult.time + " ms"));
 
-		Result selectionResult = result.TestSortingAlgorithm(sort::selectionSort, numbers);
 		viewResultOfSelectionSort.setText(Input.ArrayToString(selectionResult.numbers));
 		viewTimeOfSelectionSort.setText(String.valueOf(selectionResult.time + " ms"));
 
-		Result quickResult = result.TestSortingAlgorithm(sort::quickSortMethod, numbers);
 		viewResultOfQuickSort.setText(Input.ArrayToString(quickResult.numbers));
 		viewTimeOfQuickSort.setText(String.valueOf(quickResult.time + " ms"));
 
-		Result mergeResult = result.TestSortingAlgorithm(sort::mergeSortMethod, numbers);
 		viewResultOfMergeSort.setText(Input.ArrayToString(mergeResult.numbers));
 		viewTimeOfMergeSort.setText(String.valueOf(mergeResult.time + " ms"));
-
 	}
 
 }

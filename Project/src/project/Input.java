@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Input {
-	public Input() {
-	}
 
 	private static Random rd = new Random();
 

@@ -1,6 +1,6 @@
 package project;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class Result {
 	float time;
@@ -14,13 +14,11 @@ public class Result {
 		this.numbers = result;
 	}
 
-	public Result TestSortingAlgorithm(Function<int[], int[]> algorithms, int[] data) {
+	public Result TestSortingAlgorithm(BiFunction<int[], Order, int[]> algorithms, Order o, int[] data) {
 		long startTime = System.nanoTime();
-		int[] result = algorithms.apply(data);
+		int[] result = algorithms.apply(data, o);
 		long endTime = System.nanoTime();
-
 		float time = (endTime - startTime) / 1000000.0f;
-
 		return new Result(time, result);
 	}
 }
